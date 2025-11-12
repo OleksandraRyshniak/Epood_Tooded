@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36414.22 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Epood_Tooded", "Epood_Tooded.csproj", "{672EC7A0-5F54-4C40-B572-FD89B6E13783}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{672EC7A0-5F54-4C40-B572-FD89B6E13783}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{672EC7A0-5F54-4C40-B572-FD89B6E13783}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{672EC7A0-5F54-4C40-B572-FD89B6E13783}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{672EC7A0-5F54-4C40-B572-FD89B6E13783}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1945BE61-EE17-4E55-B26E-FFA8AE5C1451}
+	EndGlobalSection
+EndGlobal
