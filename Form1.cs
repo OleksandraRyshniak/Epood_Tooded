@@ -18,6 +18,9 @@ namespace Epood_Tooded
         }
 
 
+        SaveFileDialog save;
+        OpenFileDialog open;
+        string extension = null;
 
         private void button10_Click(object sender, EventArgs e)
         {
@@ -92,7 +95,40 @@ namespace Epood_Tooded
             }
             connect.Close();
         }
+        private void puhasta_btn_Click(object sender, EventArgs e)
+        {
+            Toode_txt.Text = "";
+            Kogus_txt.Text = "";
+            Hind_txt.Text = "";
+            Kat_box.SelectedItem = null;
 
+            using (FileStream fs = new FileStream(Path.Combine(Path.GetFullPath(@"C:\Users\opilane\source\repos\Ryshniak\Epood_Tooded\Images"), "pood.png"), FileMode.Open, FileAccess.Read))
+            {
+                Toode_pb.Image = Image.FromStream(fs);
+            }
+
+        }
+        private void kust_btn_Click(object sender, EventArgs e)
+        {
+            Id = Convert.ToInt32(dataGridView1.SelectedRows[0].Cells["Id"].Value);
+            MessageBox.Show(Id.ToString());
+            if (Id != 0)
+            {
+                command = new SqlCommand("DELETE Toodetabel WHERE Id=@id", connect);
+                connect.Open();
+                command.Parameters.AddWithValue("@id", Id);
+                command.ExecuteNonQuery();
+                connect.Close();
+
+                NaitaAndmed();
+
+                MessageBox.Show("Andmed tabelist Tooded on kustutatud");
+            }
+            else
+            {
+                MessageBox.Show("Viga Tooded tabelist andmete kustutamiega");
+            }
+        }
         private void Lisa_Kat_btn_Click(object sender, EventArgs e)
         {
             bool on = false;
@@ -170,9 +206,6 @@ namespace Epood_Tooded
 
         }
 
-        SaveFileDialog save;
-        OpenFileDialog open;
-        string extension = null;
         private void otsi_fail_btn_Click(object sender, EventArgs e)
         {
             if (Toode_txt.Text == "")
@@ -199,7 +232,7 @@ namespace Epood_Tooded
             }
             else
             {
-                MessageBox.Show("Puudub toode nimetus või oli vajutatud Cancel");
+                MessageBox.Show("Puudub toode nimetus vÃµi oli vajutatud Cancel");
             }
         }
 
@@ -237,7 +270,7 @@ namespace Epood_Tooded
         private void Lisa_btn_Click(object sender, EventArgs e)
         {
             if (Toode_txt.Text.Trim() != string.Empty &&
-                Kogus_txt.Text.Trim() != string.Empty && 
+                Kogus_txt.Text.Trim() != string.Empty &&
                 Hind_txt.Text.Trim() != string.Empty && Kat_box.SelectedItem != null)
             {
                 try
@@ -261,6 +294,7 @@ namespace Epood_Tooded
                     command.ExecuteNonQuery();
                     connect.Close();
                     NaitaAndmed();
+                    puhasta_btn_Click(sender, e);
                 }
                 catch (Exception)
                 {
@@ -269,9 +303,80 @@ namespace Epood_Tooded
             }
             else
             {
-                MessageBox.Show("Palun täida kõik väljad!");
+                MessageBox.Show("Palun tÃ¤ida kÃµik vÃ¤ljad!");
             }
         }
+        private void Uuenda_btn_Click(object sender, EventArgs e)
+        {
+            if (Toode_txt.Text != "" && Kogus_txt.Text != "" && Hind_txt.Text != "" && Toode_pb.Image != null)
+            {
+                command = new SqlCommand("UPDATE Toodetabel SET Toodenimetus=@toode, Kogus=@kogus,"
+                    + "Hind=@hind, Pilt=@pilt WHERE Id=@id", connect);
+                connect.Open();
+                if (dataGridView1.SelectedRows.Count > 0)
+                {
+                    command.Parameters.AddWithValue("@id", Id);
+                    command.Parameters.AddWithValue("@toode", Toode_txt.Text);
+                    command.Parameters.AddWithValue("@kogus", Kogus_txt.Text);
+                    command.Parameters.AddWithValue("@hind", Hind_txt.Text.Replace(",", "."));
+                    string pilt = dataGridView1.SelectedRows[0].Cells["Pilt"].Value.ToString();
+                    string file_pilt = Toode_txt.Text + extension;
+                    command.Parameters.AddWithValue("@pilt", pilt);
+                    command.ExecuteNonQuery();
+                    connect.Close();
+                    NaitaAndmed();
+                    MessageBox.Show("Andmed on uuendatud!");
+                }
+                else
+                {
+                    MessageBox.Show("Palun vali rida, mida uuendada!");
+                }
+            }
+            else
+            {
+                MessageBox.Show("Viga!");
+            }
+        }
+        private void nat_kat_btn_Click(object sender, EventArgs e)
+        {
+            Size = new Size(1350, 600);
+            TabControl kategooriad = new TabControl();
+            kategooriad.Name = "Kategooriad";
+            kategooriad.Width = 450;
+            kategooriad.Height = Height;
+            kategooriad.Location = new System.Drawing.Point(900, 0);
+            connect.Open();
+            adapter_kategooria = new SqlDataAdapter("SELECT Id, Kategooria_nimetus FROM Kategooriatable", connect);
+            DataTable dt_kat = new DataTable();
+            adapter_kategooria.Fill(dt_kat);
+            ImageList img_list = new ImageList();
+            img_list.ColorDepth = ColorDepth.Depth32Bit;
+            img_list.ImageSize = new Size(25,25);
+            int i = 0;
+            foreach (DataRow item in dt_kat.Rows)
+            {
+                kategooriad.TabPages.Add((string)item["Kategooria_nimetus"]);
+                kategooriad.TabPages[i].ImageIndex = i;
+                i++;
+                //kat_Id = (int)item["Id"];
+                //fail_list = Failid_KatId(kat_Id);
+                int j = 0;
+                int x = 0;
+               // foreach (var fail in fail_list)
+                //{
+                //    PictureBox pb = new PictureBox();
+                //    pb.Image = Image.FromFile(@"C:\Users\opilane\source\repos\Ryshniak\Epood_Tooded\Pictures\" + fail);
+                //    pb.Width = pb.Height = 100;
+                //    pb.SizeMode = PictureBoxSizeMode.StretchImage;
+                //    pb.Location = new System.Drawing.Point(x, j);
+                //    x = x + 100 + 2;
+                //    kategooriad.TabPages[i - 1].Controls.Add(pb);
+                //}
+            }
+            kategooriad.ImageList = img_list;
+            connect.Close();
+            Controls.Add(kategooriad);
 
+        }
     }
 }
